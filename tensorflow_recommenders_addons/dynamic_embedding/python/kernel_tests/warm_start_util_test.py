@@ -61,12 +61,15 @@ from tensorflow_recommenders_addons import dynamic_embedding as de
 
 import tensorflow as tf
 
+def _get_devices():
+  return ["/gpu:0" if test_util.is_gpu_available() else "/cpu:0"]
+
 
 @test_util.deprecated_graph_mode_only
 class WarmStartUtilTest(test.TestCase):
 
   def _test_warm_start(self, num_shards, use_regex):
-    devices = ["/cpu:0" for _ in range(num_shards)]
+    devices = _get_devices() * num_shards
     ckpt_prefix = os.path.join(self.get_temp_dir(), "ckpt")
     id_list = [x for x in range(100)]
     val_list = [[x] for x in range(100)]
@@ -104,7 +107,7 @@ class WarmStartUtilTest(test.TestCase):
       self.assertAllEqual(emb, val_list)
 
   def _test_warm_start_rename(self, num_shards, use_regex):
-    devices = ["/cpu:0" for _ in range(num_shards)]
+    devices = _get_devices() * num_shards
     ckpt_prefix = os.path.join(self.get_temp_dir(), "ckpt")
     id_list = [x for x in range(100)]
     val_list = [[x] for x in range(100)]
@@ -146,7 +149,7 @@ class WarmStartUtilTest(test.TestCase):
       self.assertAllEqual(emb, val_list)
 
   def _test_warm_start_estimator(self, num_shards, use_regex):
-    devices = ["/cpu:0" for _ in range(num_shards)]
+    devices = _get_devices() * num_shards
     ckpt_prefix = os.path.join(self.get_temp_dir(), "ckpt")
     id_list = [x for x in range(100)]
     val_list = [[x] for x in range(100)]
